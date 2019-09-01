@@ -1,0 +1,184 @@
+<div class="home">
+  <div class="jumbotron centered">
+    <h1>Teltonika TODO</h1>
+    <p>
+      <button class="btn btn-warning btn-lg" role="button" ui-sref="login">Login</button>
+      <button ng-show="decodedJwt.roles.includes('admin')" class="btn btn-primary btn-lg" role="button" ng-click="callUsers()">Users</button>
+      <button ng-show="decodedJwt.roles.includes('admin')" class="btn btn-primary btn-lg" role="button" ng-click="callAllTodos()">Todos</button>
+      <button ng-show="decodedJwt.roles.includes('admin')" class="btn btn-primary btn-lg" role="button" ng-click="callSyslogs()">Logs</button>
+      <!--
+      <button ng-show="decodedJwt.roles.includes('admin')" class="btn btn-info btn-lg" role="button" ng-click="showJwt()">Token</button>
+      !-->
+
+      <button ng-show="decodedJwt.roles.includes('user')" class="btn btn-primary btn-lg" role="button" ng-click="myTodos()">My Todos</button>
+      <button ng-show="decodedJwt.roles.includes('user')" class="btn btn-primary btn-lg" role="button" ng-click="showAddTodo()">Add</button>
+    </p>
+
+<!--
+    <p>Click any of the buttons to call an API and get a response</p>
+    <p><a class="btn btn-primary btn-lg" role="button" ng-click="callAnonymousApi()">Call Anonymous API</a></p>
+!-->
+
+    <ng-switch on="view">
+
+      <div ng-switch-when="jwt">
+        <h2>JWT token</h2>
+        <div class="card"><div class="card-body"><code>{{jwt}}</code></div></div>
+        <div class="card"><div class="card-body"><pre style="margin:0"><code>{{decodedJwt | json}}</code></pre></div></div>
+      </div>
+
+      <div class="class="list-group" ng-switch-when="syslogs">
+        <h2>System Log</h2>
+
+        <a href="#" class="list-group-item list-group-item-action list-group-item-primary flex-column align-items-start">
+          <div class="row">
+           <div class="col-1"><b>Id</b></div>
+           <div class="col-3"><b>Registered (UTC)</b></div>
+           <div class="col-8"><b>Details</b></div>
+          </div>
+        </a>
+
+        <a href="#" class="list-group-item list-group-item-action flex-column align-items-start" ng-repeat="syslog in response">
+          <div class="row">
+           <div class="col-1">{{syslog.id}}</div>
+           <div class="col-3">{{syslog.recorded_on}}</div>
+           <div class="col-8">{{syslog.details}}</div>
+          </div>
+        </a>
+      </div>
+
+      <div class="class="list-group" ng-switch-when="users">
+        <h2>User list</h2>
+
+        <a href="#" class="list-group-item list-group-item-action list-group-item-primary flex-column align-items-start">
+          <div class="row">
+           <div class="col-1"><b>Id</b></div>
+           <div class="col-3"><b>Name</b></div>
+           <div class="col-5"><b>Email</b></div>
+           <div class="col-1"><b>Todo's</b></div>
+           <div class="col-2"></div>
+          </div>
+        </a>
+
+        <a href="#" ng-class="{'list-group-item-dark': user.confirmed !== 1}"
+ class="list-group-item list-group-item-action flex-column align-items-start" ng-repeat="user in response">
+          <div class="row">
+           <div class="col-1">{{user.id}}</div>
+           <div class="col-3">{{user.name}}</div>
+           <div class="col-5">{{user.email}}</div>
+           <div class="col-1 text-center">{{user.todos_count}}</div>
+           <div class="col-2">
+             <button class="btn btn-primary btn-sm" role="button" ng-click="showTodos(user.id)">View</button>
+           </div>
+          </div>
+        </a>
+      </div>
+      <div class="class="list-group" ng-switch-when="user_todos">
+        <h2>User Todo list</h2>
+
+        <a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
+          <div class="row">
+           <div class="col-1"><b>Id</b><br/>{{response.user.id}}</div>
+           <div class="col-4"><b>Name</b><br/>{{response.user.name}}</div>
+           <div class="col-5"><b>Email</b><br/>{{response.user.email}}</div>
+           <div class="col-2"><b>Count</b><br/>{{response.user.todos_count}}</div>
+          </div>
+        </a>
+
+        <br/>
+
+        <a href="#" class="list-group-item list-group-item-action list-group-item-primary flex-column align-items-start">
+          <div class="row">
+           <div class="col-1"><b>Id</b></div>
+           <div class="col-9"><b>Details</b></div>
+           <div class="col-2"></div>
+          </div>
+        </a>
+
+        <a href="#" class="list-group-item list-group-item-action flex-column align-items-start" ng-repeat="todo in response.todos">
+          <div class="row">
+           <div class="col-1">{{todo.id}}</div>
+           <div class="col-9">{{todo.details}}</div>
+           <div class="col-2">
+             <button class="btn btn-danger btn-sm" role="button" ng-click="deleteUserTodo(response.user.id, todo.id)">Delete</button>
+           </div>
+          </div>
+        </a>
+      </div>
+
+      <div class="class="list-group" ng-switch-when="my_todos">
+        <h2>Todo list</h2>
+
+        <a href="#" class="list-group-item list-group-item-action list-group-item-primary flex-column align-items-start">
+          <div class="row">
+           <div class="col-1"><b>Id</b></div>
+           <div class="col-9"><b>Details</b></div>
+           <div class="col-2"></div>
+          </div>
+        </a>
+
+        <a href="#" class="list-group-item list-group-item-action flex-column align-items-start" ng-repeat="todo in response">
+          <div class="row">
+           <div class="col-1">{{todo.id}}</div>
+           <div class="col-9">{{todo.details}}</div>
+           <div class="col-2">
+             <button class="btn btn-primary btn-sm" role="button" ng-click="showEditTodo(todo.id)">Edit</button>
+             <button class="btn btn-danger btn-sm" role="button" ng-click="deleteTodo(todo.id)">Delete</button>
+           </div>
+          </div>
+        </a>
+      </div>
+
+      <div ng-switch-when="todos">
+        <h2>Todo list</h2>
+
+        <a href="#" class="list-group-item list-group-item-action list-group-item-primary flex-column align-items-start">
+          <div class="row">
+           <div class="col-1"><b>Id</b></div>
+           <div class="col-9"><b>Details</b></div>
+           <div class="col-2"></div>
+          </div>
+        </a>
+
+        <a href="#" class="list-group-item list-group-item-action flex-column align-items-start" ng-repeat="todo in response">
+          <div class="row">
+           <div class="col-1">{{todo.id}}</div>
+           <div class="col-9">{{todo.details}}</div>
+           <div class="col-2">
+             <button class="btn btn-danger btn-sm" role="button" ng-click="deleteUserTodo(null,todo.id)">Delete</button>
+           </div>
+          </div>
+        </a>
+
+      </div>
+      <div ng-switch-when="add_todo">
+
+        <form role="form">
+        <h1>Add Todo</h1>
+        <div class="form-group">
+          <textarea rows="4" type="text" class="form-control" id="details" ng-model="todo.details" placeholder="Details">
+          </textarea>
+        </div>
+        <button type="submit" class="btn btn-primary" ng-click="addTodo()">Add</button>
+      </form>
+
+      </div>
+
+      <div ng-switch-when="edit_todo">
+
+        <form role="form">
+        <h1>Edit Todo</h1>
+        <div class="form-group">
+          <textarea rows="4" type="text" class="form-control" id="details" ng-model="todo.details" placeholder="Details">
+          </textarea>
+        </div>
+        <button type="submit" class="btn btn-primary" ng-click="editTodo(todo.id)">Update</button>
+      </form>
+
+      </div>
+
+    </ng-switch>
+
+  </div>
+
+</div>
