@@ -1,5 +1,5 @@
 # Frontend
 
-install by bower install
+install by ``bower install``
 
-serve by http-angular-server
+serve by ``http-angular-server``
