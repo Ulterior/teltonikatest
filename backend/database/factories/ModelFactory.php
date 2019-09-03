@@ -24,7 +24,8 @@ $factory->define(App\User::class, function (Faker\Generator $faker) {
 });
 
 $factory->define(App\Todo::class, function (Faker\Generator $faker) {
-    return [
+    return
+    [
         'details'     => $faker->sentence
     ];
 });

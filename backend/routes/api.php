@@ -15,27 +15,39 @@ $router->get('/', function () use ($router) {
     return $router->app->version();
 });
 
-$router->group( ['prefix' => 'auth'],
-    function() use ($router) {
-      $router->post('login', ['uses' => 'AuthController@authenticate']);
-      $router->post('forgot', ['uses' => 'AuthController@forgot']);
-      $router->post('reset', ['uses' => 'AuthController@reset']);
+$router->group(
+    ['prefix' => 'auth'],
+    function () use ($router) {
+        $router->post('login', ['uses' => 'AuthController@authenticate']);
+        $router->post('forgot', ['uses' => 'AuthController@forgot']);
+        $router->post('reset', ['uses' => 'AuthController@reset']);
     }
 );
 
-$router->group( ['middleware' => ['jwt.auth']],
-    function() use ($router) {
-        $router->put('todos/{todo_id}', ['middleware' => ['role:user|admin'], 'uses' => 'TodosController@editTodo']);
-        $router->delete('todos/{todo_id}', ['middleware' => ['role:user|admin'], 'uses' => 'TodosController@deleteTodo']);
-        $router->get('todos/{todo_id}', ['middleware' => ['role:user|admin'], 'uses' => 'TodosController@getTodo']);
-        $router->post('todos', ['middleware' => ['role:user'], 'uses' => 'TodosController@addTodo']);
-        $router->get('todos', ['middleware' => ['role:user'], 'uses' => 'TodosController@userTodos']);
+$router->group(
+    ['middleware' => ['jwt.auth']],
+    function () use ($router) {
+        $router->put('todos/{todo_id}', [
+          'middleware' => ['role:user|admin'], 'uses' => 'TodosController@editTodo'
+        ]);
+        $router->delete('todos/{todo_id}', [
+          'middleware' => ['role:user|admin'], 'uses' => 'TodosController@deleteTodo'
+        ]);
+        $router->get('todos/{todo_id}', [
+          'middleware' => ['role:user|admin'], 'uses' => 'TodosController@getTodo'
+        ]);
+        $router->post('todos', [
+          'middleware' => ['role:user'], 'uses' => 'TodosController@addTodo'
+        ]);
+        $router->get('todos', [
+          'middleware' => ['role:user'], 'uses' => 'TodosController@userTodos'
+        ]);
     }
 );
 
 $router->group(
     ['prefix' => 'admin', 'middleware' => ['jwt.auth', 'role:admin']],
-    function() use ($router) {
+    function () use ($router) {
         $router->get('users', ['uses' => 'AuthController@users']);
         $router->get('todos', ['uses' => 'TodosController@todos']);
         $router->get('todos/{user_id}', ['uses' => 'TodosController@userTodos']);

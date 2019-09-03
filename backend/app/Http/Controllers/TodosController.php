@@ -1,9 +1,8 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Validator;
+use Illuminate\Support\Facades\Validator;
 
 class TodosController extends Controller
 {
@@ -22,7 +21,8 @@ class TodosController extends Controller
      *
      * @return json
      */
-     public function todos(Request $request) {
+    public function todos(Request $request)
+    {
         $todos = \App\Todo::all();
         return response()->json($todos);
     }
@@ -32,8 +32,8 @@ class TodosController extends Controller
      *
      * @return json
      */
-     public function addTodo(Request $request) {
-
+    public function addTodo(Request $request)
+    {
         $input = $request->all();
 
         $validator = Validator::make($input, [
@@ -41,9 +41,9 @@ class TodosController extends Controller
         ]);
 
         if ($validator->fails()) {
-         return response()->json([
-             'error' => $validator->errors()->all()
-         ], 400);
+            return response()->json([
+               'error' => $validator->errors()->all()
+            ], 400);
         }
 
         $todo = new \App\Todo();
@@ -61,7 +61,8 @@ class TodosController extends Controller
      *
      * @return json
      */
-     public function deleteTodo(Request $request, $todo_id) {
+    public function deleteTodo(Request $request, $todo_id)
+    {
 
         $todo = \App\Todo::findOrFail($todo_id);
         $todo->delete();
@@ -76,7 +77,8 @@ class TodosController extends Controller
      *
      * @return json
      */
-     public function getTodo(Request $request, $todo_id) {
+    public function getTodo(Request $request, $todo_id)
+    {
         $todo = \App\Todo::findOrFail($todo_id);
         return response()->json($todo);
     }
@@ -86,27 +88,27 @@ class TodosController extends Controller
      *
      * @return json
      */
-     public function editTodo(Request $request, $todo_id) {
+    public function editTodo(Request $request, $todo_id)
+    {
+        $input = $request->all();
 
-       $input = $request->all();
-
-       $validator = Validator::make($input, [
+        $validator = Validator::make($input, [
           'details' => 'string|min:1|required'
-       ]);
+        ]);
 
-       if ($validator->fails()) {
-        return response()->json([
-            'error' => $validator->errors()->all()
-        ], 400);
-       }
+        if ($validator->fails()) {
+            return response()->json([
+                'error' => $validator->errors()->all()
+            ], 400);
+        }
 
-       $todo = \App\Todo::findOrFail($todo_id);
-       $todo->details = $input['details'];
-       $todo->save();
+        $todo = Todo::findOrFail($todo_id);
+        $todo->details = $input['details'];
+        $todo->save();
 
-       (new \App\Syslog)->register('user:'.$request->user()->id.' modified todo id:'.$todo->id);
+        (new \App\Syslog)->register('user:'.$request->user()->id.' modified todo id:'.$todo->id);
 
-       return response()->json($todo);
+        return response()->json($todo);
     }
 
 
@@ -115,15 +117,16 @@ class TodosController extends Controller
      *
      * @return json
      */
-     public function userTodos(Request $request, $user_id=null) {
-       if(isset($user_id)) {
-         $user = \App\User::findOrFail($user_id);
-         $todos = $user->todos()->get();
-         return response()->json(compact('user', 'todos'));
-       } else {
-        $user = $request->user();
-        $todos = $user->todos()->get();
-        return response()->json($todos);
+    public function userTodos(Request $request, $user_id = null)
+    {
+        if (isset($user_id)) {
+            $user = \App\User::findOrFail($user_id);
+            $todos = $user->todos()->get();
+            return response()->json(compact('user', 'todos'));
+        } else {
+            $user = $request->user();
+            $todos = $user->todos()->get();
+            return response()->json($todos);
         }
     }
 

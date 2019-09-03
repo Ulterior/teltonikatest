@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
+// @codingStandardsIgnoreLine
 class CreateSyslogsTable extends Migration
 {
     /**
@@ -13,15 +14,15 @@ class CreateSyslogsTable extends Migration
      */
     public function up()
     {
-      // Create the `Posts` table
-      Schema::create('syslogs', function (Blueprint $table) {
-          $table->bigIncrements('id');
-          $table->timestamp('recorded_on');
-          $table->string('details');
-          $table->index(['recorded_on']);
-      });
+        // Create the `Posts` table
+        Schema::create('syslogs', function (Blueprint $table) {
+            $table->bigIncrements('id');
+            $table->timestamp('recorded_on');
+            $table->string('details');
+            $table->index(['recorded_on']);
+        });
 
-      DB::statement("ALTER TABLE syslogs MODIFY recorded_on TIMESTAMP(3)");
+        DB::statement("ALTER TABLE syslogs MODIFY recorded_on TIMESTAMP(3)");
     }
 
     /**
@@ -31,6 +32,6 @@ class CreateSyslogsTable extends Migration
      */
     public function down()
     {
-      Schema::dropIfExists('syslogs');
+        Schema::dropIfExists('syslogs');
     }
 }

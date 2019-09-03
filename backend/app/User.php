@@ -12,8 +12,8 @@ use Zizaco\Entrust\Traits\EntrustUserTrait;
 class User extends Model implements AuthenticatableContract, AuthorizableContract
 {
     use Authenticatable, Authorizable, EntrustUserTrait {
-      EntrustUserTrait::can as may;
-      Authorizable::can insteadof EntrustUserTrait;
+        EntrustUserTrait::can as may;
+        Authorizable::can insteadof EntrustUserTrait;
     }
 
     /**
@@ -38,12 +38,13 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 
     protected $appends = ['todos_count'];
 
-    public function todos() {
-      return $this->hasMany('\App\Todo');
+    public function todos()
+    {
+        return $this->hasMany('App\Todo');
     }
 
-    public function getTodosCountAttribute() {
-      return $this->todos()->count();
+    public function getTodosCountAttribute()
+    {
+        return $this->todos()->count();
     }
-
 }

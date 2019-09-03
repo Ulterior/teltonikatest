@@ -26,10 +26,9 @@ $app->configure('entrust');
 
 // $app->withFacades();
 
-$app->withFacades(true,
-   [
+$app->withFacades(true, [
      Zizaco\Entrust\EntrustFacade::class => 'Entrust',
-   ]);
+]);
 
 $app->withEloquent();
 

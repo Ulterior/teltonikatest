@@ -17,12 +17,12 @@ class Syslog extends Model
 
     public function register($message)
     {
-      $this->details = substr($message, 0, 255);
+        $this->details = substr($message, 0, 255);
 
-      list($usec, $sec) = explode(" ", microtime());
-      $dt = Carbon::instance(new \DateTime(date('Y-m-d\TH:i:s', $sec) . substr($usec, 1)))->tz('Europe/London');
-      $this->recorded_on = $dt->format('Y-m-d H:i:s.u');
+        list($usec, $sec) = explode(" ", microtime());
+        $dt = Carbon::instance(new \DateTime(date('Y-m-d\TH:i:s', $sec) . substr($usec, 1)))->tz('Europe/London');
+        $this->recorded_on = $dt->format('Y-m-d H:i:s.u');
 
-      $this->save();
+        $this->save();
     }
 }
